@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Conversations for: {{user.name}}</title>
+{% endblock %}
+
+{% block content %}
+<style>
+.deemphasized { 
+    color: #444; font-size: 0.9em;
+}
+.background {
+    background-color:white;
+    border-radius:10px;
+}
+.marginized {
+    margin:7px;
+}
+</style>
+<div class="hero-unit">
+    <h2>Conversations:</h2>
+    </br></br>
+    {% for conversation in conversations %}
+    <div class="background offset1" style="max-width:75%"> 
+        <a href="/{{conversation.sender_id}}/{{conversation.receiver_id}}/conversation" class="marginized">{{conversation.subject}}</a></br>
+        <div class="offset1"><p class="deemphasized marginized">{{conversation.messages[-1].content}}</div>
+        <h6 class="marginized">Your conversation with {{conversation.otherperson.username}}</h6>
+    </div>
+    </br>
+    {% endfor %}
+    
+</div>
+{% endblock %}

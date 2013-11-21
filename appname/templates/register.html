@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Register</title>
+{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" method="POST">
+        <div class="control-group">
+            <label class="control-label">Name:</label> {{form.name}}<br>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Username:</label> {{form.username}}<br>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Password:</label> {{form.password}}<br>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Confirm Password:</label> {{form.confirm_pass}}<br>
+        </div>
+        {% if user.admin %}
+            <div class="control-group">
+                <label class="control-label">Permissions</label>{{form.admin}}<br>
+            </div>
+        {% endif %}
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="Register"><br>
+            </div>
+        </div>
+    </form>
+    {% if message %}
+        {{message}}
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,114 @@
+<html>
+    <head>
+        {%block css%}
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
+        <style type="text/css">
+            .box_textshadow {
+                 text-shadow: 2px 2px 0px #000000; /* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
+            }
+            .navbar-search {
+                padding-left: 100px;
+                padding-top: 6px;
+            }
+            .background {
+                background-color:white;
+                border-radius:10px;
+                max-width=50%;
+                overflow:hidden;
+            }
+            body {
+                background-color: #FF9E36;
+            
+            }
+        </style>
+        {%endblock%}
+
+        {% block title %}
+            <title>App Name</title>
+        {% endblock %}
+        {%block javascripts%}
+            <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js') }}"></script>
+        {%endblock%}
+        {%block scripts%}
+
+        {% endblock %}
+    </head>
+    <body class="container">
+        {% if user.name %}
+            <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <ul class="nav">
+                            <li class="active">
+                                <a class="brand" href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="/{{user.id}}/listings">My Listings</a>
+                            </li>
+                            <li>
+                                <a href="/list_book">Add Listing</a>
+                            </li>
+                            <li>
+                                <form class="navbar-search pull-left" action="/search" method="POST">
+                                    <input name="search" type="text" class="search-query" placeholder="Search by ISBN/Course">
+                                </form>
+                            </li>
+                            <li>
+                                <a href="/inbox"><i class="icon-envelope icon-white "></i></a>
+                            </li>
+                            </ul>
+                        <form action="/logout" method="POST" style="padding-left:25px" class="navbar-form pull-right">
+                            <button class="btn" type="submit">Logout</button>
+                        </form>
+                        
+                        <p class="navbar-text pull-right">
+                            Logged in as: <a href="/me">{{user.name}}</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+        <!-- Navbar for users who are NOT logged in. -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class="nav">
+                        <li class="active">
+                            <a class="brand" href="/">Home</a>
+                        </li>
+                        <li>
+                            <a href="/register">Register</a>
+                        </li>
+                        <li>
+                                <form class="navbar-search" action="/search" method="POST">
+                                    <input name="search" type="text" class="search-query" placeholder="Search">
+                                </form>
+                        </li>
+                    </ul>
+                    <form class="navbar-form pull-right form-inline" method="POST" action="/login">
+                                {{login_form.username(placeholder="Username", class="span2",  size=20)}}
+                                {{login_form.password(placeholder="Password", class="span2", size=5)}}
+                                <button class="btn" type="submit">Login</input>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="header">
+            {%block header%}
+            {%endblock%}
+        </div>
+
+        <div id="content" class="hero-unit">
+            {%block content%}
+            {%endblock%}
+        </div>
+
+        <div id="footer">
+            {%block footer%}
+            {%endblock%}
+        </div>
+    </body>
+</html>

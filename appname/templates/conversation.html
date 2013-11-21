@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Conversation with {{receiver.name}}</title>
+{% endblock %}
+
+{% block content %}
+
+<style>
+.background {
+    background-color:white;
+    border-radius:10px;
+    max-width=50%;
+    overflow:hidden;
+}
+label {
+    margin:7px;
+}
+</style>
+
+<div class="container clear-top">
+    {% if conversation %}
+        <h2>[Subject] {{conversation.subject}}</h2>
+        </br>
+        <h2>Your conversation with {{receiver.name}}:</h2>
+        </br>
+        {% for msg in conversation.messages %}
+        <div class="row-fluid">
+            {% if msg.sender_id == user.id %}
+            <div class="background divoverflow span6 pull-right">
+                <label class="control-label">
+                    {{msg.content}}
+                </label>
+            <label size="10">Sent by <strong>{{msg.sender.name}}</strong> on <strong>{{msg.sent_at}}</strong></label>
+            </div>
+            {% else %}
+            <div class="background divoverflow span6 pull-left">
+                <label class="control-label">
+                    {{msg.content}}
+                </label>
+            <label size="10">Sent by <strong>{{msg.sender.name}}</strong> on <strong>{{msg.sent_at}}<strong></label>
+            </div>
+            {% endif %}
+        </div>
+        </br>
+        {% endfor %}
+    {% endif %}
+</div>
+</br>
+<div class="container">   
+    <div class="span12">
+    <div class="offset6 span6">
+    <h2>Send a message to {{receiver.name}}:</h2>
+    <form action="{{url_for('conversation', sender_id=user.id, receiver_id=receiver.id)}}", method="POST">
+    {% if not conversation %}
+    Subject: {{form.subject}}</br>
+    {% endif %}
+    Message: {{form.content}}</br>
+    <input type="submit" class="btn span2" value="Send"></input>
+    </form>
+    </div>
+    </div> 
+</div>
+{% endblock %}
