@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, flash, g, session, redirect
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from appname import db, app, login_manager
+from gtb import db, app, login_manager
 from forms import Register, LoginForm, ConversationForm
 from models import User, Message, Conversation
 from functools import wraps

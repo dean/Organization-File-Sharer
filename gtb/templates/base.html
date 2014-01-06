@@ -1,6 +1,5 @@
 <html>
     <head>
-        {%block css%}
         <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
         <style type="text/css">
             .box_textshadow {
@@ -17,21 +16,22 @@
                 overflow:hidden;
             }
             body {
-                background-color: #FF9E36;
+                background-color: #22DE36;
             
             }
         </style>
+
+        {% block css %}
+        {%endblock%}
+
+        <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js') }}"></script>
+        {% block javascript %}
         {%endblock%}
 
         {% block title %}
             <title>App Name</title>
         {% endblock %}
-        {%block javascripts%}
-            <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js') }}"></script>
-        {%endblock%}
-        {%block scripts%}
 
-        {% endblock %}
     </head>
     <body class="container">
         {% if user.name %}
@@ -97,18 +97,18 @@
         {% endif %}
 
         <div id="header">
-            {%block header%}
-            {%endblock%}
+            {% block header %}
+            {% endblock %}
         </div>
 
         <div id="content" class="hero-unit">
-            {%block content%}
-            {%endblock%}
+            {% block content %}
+            {% endblock %}
         </div>
 
         <div id="footer">
-            {%block footer%}
-            {%endblock%}
+            {% block footer %}
+            {% endblock %}
         </div>
     </body>
 </html>

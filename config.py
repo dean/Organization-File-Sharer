@@ -2,7 +2,7 @@ import os
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
 #use 'dev', 'test', or 'production'
-DATABASE_TYPE = 'prod'
+DATABASE_TYPE = 'test'
 
 DEBUG = False
 
