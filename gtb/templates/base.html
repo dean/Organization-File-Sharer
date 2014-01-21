@@ -34,19 +34,13 @@
 
     </head>
     <body class="container">
-        {% if user.name %}
+        {% if g.user.name %}
             <div class="navbar navbar-inverse navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container">
                         <ul class="nav">
                             <li class="active">
                                 <a class="brand" href="/">Home</a>
-                            </li>
-                            <li>
-                                <a href="/{{user.id}}/listings">My Listings</a>
-                            </li>
-                            <li>
-                                <a href="/list_book">Add Listing</a>
                             </li>
                             <li>
                                 <form class="navbar-search pull-left" action="/search" method="POST">
@@ -62,7 +56,7 @@
                         </form>
                         
                         <p class="navbar-text pull-right">
-                            Logged in as: <a href="/me">{{user.name}}</a>
+                            Logged in as: <a href="/me">{{g.user.name}}</a>
                         </p>
                     </div>
                 </div>
@@ -86,8 +80,8 @@
                         </li>
                     </ul>
                     <form class="navbar-form pull-right form-inline" method="POST" action="/login">
-                                {{login_form.username(placeholder="Username", class="span2",  size=20)}}
-                                {{login_form.password(placeholder="Password", class="span2", size=5)}}
+                                {{g.login_form.username(placeholder="Username", class="span2",  size=20)}}
+                                {{g.login_form.password(placeholder="Password", class="span2", size=5)}}
                                 <button class="btn" type="submit">Login</input>
                         </ul>
                     </form>

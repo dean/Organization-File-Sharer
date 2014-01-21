@@ -1,7 +1,7 @@
 Flask
 Flask-Login
 Flask-SQLAlchemy
-Flask-WTF==0.8
+Flask-WTF==0.8.2
 Jinja2
 MySQL-python
 SQLAlchemy==0.7

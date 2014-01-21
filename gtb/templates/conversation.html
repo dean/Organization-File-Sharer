@@ -26,7 +26,7 @@ label {
         </br>
         {% for msg in conversation.messages %}
         <div class="row-fluid">
-            {% if msg.sender_id == user.id %}
+            {% if msg.sender_id == g.user.id %}
             <div class="background divoverflow span6 pull-right">
                 <label class="control-label">
                     {{msg.content}}
@@ -51,7 +51,7 @@ label {
     <div class="span12">
     <div class="offset6 span6">
     <h2>Send a message to {{receiver.name}}:</h2>
-    <form action="{{url_for('conversation', sender_id=user.id, receiver_id=receiver.id)}}", method="POST">
+    <form action="{{url_for('conversation', sender_id=g.user.id, receiver_id=receiver.id)}}", method="POST">
     {% if not conversation %}
     Subject: {{form.subject}}</br>
     {% endif %}

@@ -29,13 +29,13 @@ def before_request():
 
 @app.route("/")
 def home():
-    return render_template("home.html", login_form=g.login_form, user=g.user)
+    return render_template("home.html")
 
 
 #TODO: Make this exclusively no_perms, and fix templates to use flashed text
 @app.route("/no_perms")
 def no_perms(msg):
-    return render_template("message.html", login_form=g.login_form, user=g.user, msg=msg)
+    return render_template("message.html",  msg=msg)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -44,7 +44,11 @@ def register():
     message = ""
 
     if request.method == "POST":
-        if form.password.data != form.confirm_pass.data:
+        if form.username.data < 4:
+            message="Your username needs to be 4 or more characters!"
+        elif len(form.password.data) < 4:
+            message="Your password needs to be 4 or more characters!"
+        elif form.password.data != form.confirm_pass.data:
             message="The passwords provided did not match!\n"
         elif User.query.filter_by(username=form.username.data).all():
             message="This username is taken!"
@@ -56,9 +60,9 @@ def register():
             db.session.commit()
             login_user(user)
             flash("Registered and logged in successfully!")
-            return render_template('home.html', user=g.user, login_form=g.login_form)
+            return render_template('home.html', login_form=g.login_form)
 
-    return render_template('register.html', user=g.user, login_form=g.login_form, form=form, message=message)
+    return render_template('register.html',  form=form, message=message)
 
 
 @login_manager.user_loader
@@ -117,7 +121,7 @@ def inbox():
             conversations.append(conv)
 
         #conversations = unsorted_conversations.sort(key=lambda r: r.messages[len(r.messages)-1].sent_at)
-        return render_template('inbox.html', user=g.user, login_form=g.login_form,
+        return render_template('inbox.html', 
                                 conversations=conversations)
     return no_perms("You do not have any conversations!")
 
@@ -169,7 +173,7 @@ def conversation(sender_id,receiver_id):
             msg.sent_at = msg.sent_at.strftime("%b %d, %Y")
         conv.messages = Message.query.filter_by(conversation_id=conv.id).all()
 
-    return render_template("conversation.html", form=form, user=g.user, login_form=g.login_form, conversation=conv, receiver=receiver)
+    return render_template("conversation.html", form=form, conversation=conv, receiver=receiver)
 
 
 app.route("/search", methods=['GET', 'POST'])

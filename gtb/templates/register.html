@@ -18,7 +18,7 @@
         <div class="control-group">
             <label class="control-label">Confirm Password:</label> {{form.confirm_pass}}<br>
         </div>
-        {% if user.admin %}
+        {% if g.user.admin %}
             <div class="control-group">
                 <label class="control-label">Permissions</label>{{form.admin}}<br>
             </div>
