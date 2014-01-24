@@ -1,3 +1,3 @@
-from appname import app, db
+from gtb import app, db
 
 db.create_all()
