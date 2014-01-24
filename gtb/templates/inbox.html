@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}
-    <title>Conversations for: {{g.user.name}}</title>
-{% endblock %}
-
-{% block content %}
+{% block css %}
 <style>
 .deemphasized { 
     color: #444; font-size: 0.9em;
@@ -17,6 +13,13 @@
     margin:7px;
 }
 </style>
+{% endblock %}
+
+{% block title %}
+    <title>Conversations for: {{g.user.name}}</title>
+{% endblock %}
+
+{% block content %}
 <div class="hero-unit">
     <h2>Conversations:</h2>
     </br></br>

@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}
-    <title>Conversation with {{receiver.name}}</title>
-{% endblock %}
-
-{% block content %}
-
+{% block css %}
 <style>
 .background {
     background-color:white;
@@ -17,6 +12,13 @@ label {
     margin:7px;
 }
 </style>
+{% endblock %}
+
+{% block title %}
+    <title>Conversation with {{receiver.name}}</title>
+{% endblock %}
+
+{% block content %}
 
 <div class="container clear-top">
     {% if conversation %}

@@ -91,9 +91,10 @@ def login():
             if user and user.password == form.password.data:
                 login_user(user)
                 flash("Logged in successfully.")
+                return redirect("/")
     else:
         return no_perms("There is a user already logged in!")
-    return redirect("/")
+    return render_template("login.html", form=form)
 
 
 @app.route("/logout", methods=['POST'])
