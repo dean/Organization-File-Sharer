@@ -1,3 +1,4 @@
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
 from gtb import db
@@ -32,10 +33,13 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
     def __init__(self, username, name, password, admin=False):
         self.username = username
         self.name = name
-        self.password = password
+        self.password = generate_password_hash(password)
         self.admin = admin
 
 class Message(db.Model):

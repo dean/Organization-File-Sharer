@@ -60,7 +60,7 @@ def register():
             db.session.commit()
             login_user(user)
             flash("Registered and logged in successfully!")
-            return render_template('home.html', login_form=g.login_form)
+            return redirect("/")
 
     return render_template('register.html',  form=form, message=message)
 
@@ -88,7 +88,7 @@ def login():
         if form.validate_on_submit():
             # login and validate the user...
             user = User.query.filter_by(username=form.username.data).first()
-            if user and user.password == form.password.data:
+            if user and user.check_password(form.password.data):
                 login_user(user)
                 flash("Logged in successfully.")
                 return redirect("/")
