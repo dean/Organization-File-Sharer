@@ -1,8 +1,9 @@
 from flask import Blueprint, request, render_template, flash, g, session, redirect
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from gtb import db, app, login_manager
-from forms import Register, LoginForm, ConversationForm
-from models import User, Message, Conversation
+from forms import Register, LoginForm, ConversationForm, CreateOrg, InviteToOrg
+from models import (User, Message, Conversation, Organization, OrganizationMember,
+                    File)
 from functools import wraps
 import urllib
 import os
@@ -104,6 +105,10 @@ def logout():
     return redirect("/")
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.')
+
+
 #TODO: Sort most recent conversations to first
 #TODO: Add in unread messages
 @app.route("/inbox", methods=['GET'])
@@ -122,8 +127,8 @@ def inbox():
             conversations.append(conv)
 
         #conversations = unsorted_conversations.sort(key=lambda r: r.messages[len(r.messages)-1].sent_at)
-        return render_template('inbox.html', 
-                                conversations=conversations)
+        return render_template('inbox.html', conversations=conversations)
+
     return no_perms("You do not have any conversations!")
 
 
@@ -177,8 +182,51 @@ def conversation(sender_id,receiver_id):
     return render_template("conversation.html", form=form, conversation=conv, receiver=receiver)
 
 
-app.route("/search", methods=['GET', 'POST'])
+@app.route("/search", methods=['GET', 'POST'])
 def search():
     if not request.method == "POST":
         return no_perms("You need to provide a term to search for!")
     return "Search page!"
+
+
+@app.route("/create/organization", methods=['GET', 'POST'])
+@login_required
+def create_org():
+    form = CreateOrg()
+    msg = ""
+    if request.method == "POST":
+        new_org = Organization(name=form.name.data, admin_id=current_user.id)
+        db.session.add(new_org)
+        db.session.commit()
+
+        org_member = OrganizationMember(organization_id=new_org.id,
+                                        user_id=current_user.id,
+                                        accepted=True,
+                                        rank=100)
+        db.session.add(org_member)
+        db.session.commit()
+        msg = "Organization created successfully!"
+        # Should redirect to add members page, but that's not created yet :(
+
+    return render_template("create_org.html", form=form, msg=msg)
+
+
+@app.route("/me/organizations")
+@login_required
+def my_orgs():
+    orgs = current_user.organizations()
+    admin_orgs = filter(lambda org: org.admin_id == current_user.id, orgs)
+    member_orgs = filter(lambda org: org.admin_id != current_user.id, orgs)
+
+    return render_template("my_orgs.html", admin_orgs=admin_orgs,
+                           member_orgs=member_orgs)
+
+
+# Make sure a user has permissions to view the org
+@app.route("/display/organization/<int:id>")
+def display_org(id):
+    # for now lets just display members and files.
+    members = OrganizationMember.query.filter_by(organization_id=id).all()
+    files = File.query.filter_by(organization_id=id).all()
+
+    return render_template("display_org.html", members=members, files=files)

@@ -15,3 +15,10 @@ class LoginForm(Form):
 class ConversationForm(Form):
     subject = TextField('subject')
     content = TextAreaField('content', [Required()])
+
+class CreateOrg(Form):
+    name = TextField('name', [Required()])
+
+class InviteToOrg(Form):
+    username = TextField('username', [Required()])
+    rank = TextField('rank', [Required()])

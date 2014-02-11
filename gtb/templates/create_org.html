@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Create Organization</title>
+{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" method="POST">
+        <div class="control-group">
+            <label class="control-label">Name:</label> {{form.name}}<br>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="Create"><br>
+            </div>
+        </div>
+    </form>
+    {% if message %}
+        {{message}}
+    {% endif %}
+
+{% endblock %}

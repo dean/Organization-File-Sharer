@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>My Organizations</title>
+{% endblock %}
+
+{% block content %}
+<div class="hero-unit">
+    <h2>Members:</h2>
+    </br>
+    <table class="table table-striped span2">
+        <tr>
+            <th>Members</th>
+            <th>Rank</th>
+        </tr>
+        {% for member in members %}
+        <tr style="border-radius:10px">
+            <td>{{ member.user.name }}</td>
+            <td>{{ member.rank }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </br></br>
+    <h2>Files:</h2>
+    </br>
+    {% if files %}
+    <table class="table table-striped span2">
+        <tr>
+            <th>Author</th>
+            <th>Name</th>
+        </tr>
+        {% for file in files %}
+        <tr style="border-radius:10px">
+            <td>{{file.author.name}}</td>
+            <td>{{file.name}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <em>There are no files yet....</em>
+    {% endif %}
+{% endblock %}
+</div>

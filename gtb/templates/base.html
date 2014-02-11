@@ -2,6 +2,11 @@
     <head>
         <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
         <style type="text/css">
+            .center-div
+            {
+                 margin: 0;
+                 width: 85%; 
+            }
             .box_textshadow {
                  text-shadow: 2px 2px 0px #000000; /* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
             }
@@ -43,6 +48,12 @@
                         <ul class="nav">
                             <li class="active">
                                 <a class="brand" href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('create_org') }}">Create Organization</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('my_orgs') }}">My Organizations</a>
                             </li>
                             <li>
                                 <form class="navbar-search pull-left" action="/search" method="POST">
@@ -97,7 +108,7 @@
             {% endblock %}
         </div>
 
-        <div id="content" class="hero-unit">
+        <div id="content" class="center-div hero-unit">
             {% block content %}
             {% endblock %}
         </div>

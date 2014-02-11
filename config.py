@@ -10,7 +10,7 @@ SECRET_KEY = "ay98r0u2q9305jr2or@QTG%#QH^KWTRTGrqy43"
 UPLOAD_FOLDER = "/var/www/xmls"
 
 if DATABASE_TYPE == 'test' or DATABASE_TYPE == 'dev':
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'db/dbname.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'db/gtb.db')
 elif DATABASE_TYPE == 'prod':
     SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/dbname'
 else:

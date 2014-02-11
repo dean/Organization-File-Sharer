@@ -18,8 +18,8 @@ class User(db.Model):
     admin = db.Column(db.Boolean)
 
     def organizations(self):
-        return (om.organization for om in OrganizationMember.query
-                    .filter_by(user_id=self.id).all())
+        return [om.organization for om in OrganizationMember.query
+                    .filter_by(user_id=self.id).all()]
 
     def is_authenticated(self):
         return True
@@ -82,9 +82,9 @@ class Organization(db.Model):
 
     admin = db.relationship('User')
 
-    def __init__(self, name, admin=False):
+    def __init__(self, name, admin_id):
         self.name = name
-        self.admin = admin
+        self.admin_id = admin_id
 
 class OrganizationMember(db.Model):
     __tablename__ = "organization_members"
@@ -105,7 +105,10 @@ class OrganizationMember(db.Model):
 
     def accept():
         self.accepted = True
-        
+
+    def deny():
+        self.accepted = False
+
 class File(db.Model):
     __tablename__ = "files"
     id = db.Column(db.Integer, primary_key=True)
