@@ -5,3 +5,5 @@ gtb/static/js/jquery*
 gtb/static/bootstrap
 env
 db
+*.swp
+*.swo
