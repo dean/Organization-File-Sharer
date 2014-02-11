@@ -1,3 +1,5 @@
+config.py
+alembic.ini
 *.pyc
 gtb/static/js/jquery*
 gtb/static/bootstrap
