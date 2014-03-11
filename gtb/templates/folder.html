@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>{{folder.name}}</title>
+{% endblock %}
+
+{% block content %}
+<div class="hero-unit">
+    <h2>Classes in "{{folder.name}}":</h2>
+    </br>
+    <ul>
+        {% for course_folder in course_folders %}
+        <li><a href="{{url_for('display_files', organization_id=organization.id, term=folder.name, folder=course_folder)}}">{{course_folder}}</a></li>
+        {% endfor %}
+    </ul>
+    
+{% endblock %}
+</div>

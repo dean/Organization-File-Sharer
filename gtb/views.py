@@ -4,7 +4,7 @@ from flask import (Blueprint, request, render_template, flash, g, session,
 from flask.ext.login import (login_user, logout_user, current_user,
                                 login_required)
 from flask.ext.wtf import Form
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 from werkzeug.utils import secure_filename
 from wtforms.ext.sqlalchemy.orm import model_form
 
@@ -16,9 +16,10 @@ from models import (User, Message, Conversation, Organization,
                     OrganizationMember, File, Folder)
 
 from functools import wraps
-import urllib
+import datetime
 import os
 import re
+import urllib
 
 
 """
@@ -128,7 +129,8 @@ def member_of(org_id):
     """
     return db.session.query(OrganizationMember).filter_by(
                                         user_id=current_user.id,
-                                        organization_id=org_id
+                                        organization_id=org_id,
+                                        accepted=True
                                 ).first()
 
 
@@ -150,7 +152,7 @@ def accept_invitation():
 
     if org_member:
         org_member.accept()
-        return redirect('my_invites')
+        return redirect('handle_invites')
     else:
         return no_perms('Could not find your invite!')
 
@@ -311,18 +313,61 @@ def display_org(org_id):
                             organization_id=org_id,
                             top=False
                         ).all()
+    print folders
 
     return render_template("display_org.html", organization=organization,
                             members=members, recent_files=recent_files,
                             folders=folders)
 
 
-@app.route('/uploads/<file_name>', methods=['GET', 'POST'])
-def download(file_name):
+@app.route('/organization/<int:organization_id>/term/<path:term>/folder/<path:folder>')
+def display_files(organization_id, term="", folder=""):
+    """
+    Returns all files for a given folder.
+    """
+    print folder
+    course_tag = folder.split(" ")[0]
+    course_id = folder.split(" ")[1]
+
+    files = File.query.filter_by(
+                        organization_id=organization_id,
+                        course_tag=course_tag,
+                        course_id=course_id
+                    ).order_by(
+                            File.upload_date.desc()
+                    ).all()
+
+    files = filter(lambda x: x.folder.name == term, files)
+
+    return render_template("files.html", folder=folder,
+                            files=files, organization_id=organization_id)
+
+
+@app.route('/uploads/<int:file_id>', methods=['GET', 'POST'])
+def download(file_id):
     """
     Sends an uploaded file from the 'uploads' directory.
     """
-    return send_from_directory(app.config['UPLOAD_FOLDER'], file_name, as_attachment=True)
+    f = File.query.filter_by(id=file_id).first()
+    return send_from_directory(f.full_path, f.file_name, as_attachment=True)
+
+
+@app.route('/organization/<int:organization_id>/folder/<int:folder_id>')
+def get_folder(organization_id, folder_id):
+    """
+    Displays a folder and it's contents.
+    """
+    organization = Organization.query.filter_by(id=organization_id).first()
+    folder = Folder.query.filter_by(id=folder_id).first()
+    course_folders_dup = [file.course_folder for file in folder.files]
+    print course_folders_dup
+    # remove duplicates with set, then convert back to list.
+    course_folders_uniq = list(set(course_folders_dup))
+
+    print course_folders_uniq
+    return render_template('folder.html', folder=folder,
+                            course_folders=course_folders_uniq,
+                            organization=organization)
 
 
 @app.route("/")
@@ -484,11 +529,67 @@ def search():
     """
     Search the db for files.
     * Should be search for files from orgs we are a part of? Idk.
+    Will search:
+        - Organization (All files for organization)
+        - Term
+        - Class
+        - File name
     """
 
-    if not request.method == "POST":
+    if not request.method == "POST" or not request.form.get('search'):
         return no_perms("You need to provide a term to search for!")
-    return "Search page!"
+
+    my_orgs = OrganizationMember.query.filter_by(
+                                        user_id=current_user.id,
+                                        accepted=True
+                                    ).all()
+    my_org_ids = [org.organization_id for org in my_orgs]
+
+    term = request.form.get('search')
+    results = []
+
+    # Check organizations
+    organizations = Organization.query.filter(
+                            Organization.name.like("%" + term + "%")
+                        ).all()
+
+    if organizations:
+        org_ids = [org.id for org in organizations]
+        for org_id in org_ids:
+            if org_id in my_org_ids:
+                files = File.query.filter_by(organization_id=org_id).all()
+                results += files
+
+    temp_term = term.replace(" ", "").lower()
+
+    # Check terms
+    folders = Folder.query.filter(Folder.organization_id.in_(my_org_ids)).all()
+    for folder in folders:
+        if folder.name.replace(" ", "").lower() == temp_term:
+            results += folder.files
+
+    # Check files classes matches
+    all_files =  File.query.filter_by(organization_id=2).all()
+    relevant_files = File.query.filter(File.organization_id.in_(my_org_ids)).all()
+    for file in relevant_files:
+        if file.course_folder.replace(" ", "").lower() == temp_term:
+            results += [file]
+
+    # Check file names similar
+    temp_term = term.split(' ') or term
+    for t in temp_term:
+        relevant_files = File.query.filter(
+                                    and_(File.organization_id.in_(my_org_ids),
+                                         File.file_name.like("%" + t + "%"))
+                                ).all()
+        results += relevant_files if relevant_files else []
+
+    results = list(set(results))
+
+    if results:
+        return render_template('search.html', results=results, term=term)
+    else:
+        return no_perms("No results found...")
 
 
 @login_required
@@ -504,20 +605,45 @@ def upload_file(org_id):
     if request.method == "POST":
         file = request.files['file']
 
-        # Do security checks basically.
-        if (file and allowed_file(file.filename) and form.course.data and
-                form.term.data):
+        if (file and allowed_file(file.filename) and form.course_id.data and
+            request.form.get('date')):
+
+            exists = Folder.query.filter_by(
+                                    organization_id=org_id,
+                                    term=form.term.data,
+                                    year=form.year.data
+                                ).first()
+            folder_id = 0
+            if exists:
+                folder_id = exists.id
+            else:
+                folder = Folder(organization_id=organization.id,
+                                top=False,
+                                term=form.term.data,
+                                year=form.year.data)
+                db.session.add(folder)
+                db.session.commit()
+                folder_id = folder.id
+
+            # Parse date and create a datetime object
+            date_inp = map(int, request.form['date'].split('/'))
+            month = date_inp[0]
+            day = date_inp[1]
+            year = date_inp[2]
+            date = datetime.datetime(year, month, day, 0, 0, 0)
 
             filename = secure_filename(file.filename)
+            f = File(file_name=filename, author_id=g.user.id,
+                     organization_id=org_id, folder_id=folder_id,
+                     course_tag=form.course_tag.data,
+                     course_id=form.course_id.data,
+                     class_date=date)
 
-            f = File(filename, g.user.id, org_id, form.course.data,
-                        form.term.data)
             db.session.add(f)
             db.session.commit()
 
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(f.full_path + f.file_name)
             return redirect(url_for('display_org', org_id=org_id))
     else:
         return render_template('upload.html', form=form,
                                 organization=organization)
-

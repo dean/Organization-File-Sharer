@@ -77,19 +77,30 @@ class File(db.Model):
         self.class_date = class_date
 
         if course_tag and course_id:
-            path = (self.folder.path + self.course_tag + '_' +
+            folder = db.session.query(Folder).filter_by(id=folder_id).first()
+            path = (folder.path + self.course_tag + '_' +
                     self.course_id + '/')
 
             if not os.path.exists(path):
-                os.mkdirs(path)
+                os.makedirs(path)
 
     @property
     def full_path(self):
+        """
+        Returns the path to the file
+        """
         if self.course_tag and self.course_id:
             return (self.folder.path + self.course_tag + '_' +
-                    str(self.course_id) + '/' + self.file_name)
+                    str(self.course_id) + '/')
         else:
             return self.folder.path
+
+    @property
+    def course_folder(self):
+        """
+        Returns the folder name via course_tag and course_id
+        """
+        return self.course_tag + ' ' + str(self.course_id)
 
 
 class Folder(db.Model):
@@ -118,11 +129,14 @@ class Folder(db.Model):
             path += term + '_' + year + '/'
 
         if not os.path.exists(path):
-            os.mkdirs(path)
+            os.makedirs(path)
 
     @property
     def name(self):
-        return term + ' ' + year
+        if self.term and self.year:
+            return self.term + ' ' + str(self.year)
+        else:
+            return str(self.organization_id)
 
     @property
     def path(self):

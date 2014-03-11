@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Files matching "{{term}}"</title>
+{% endblock %}
+
+{% block content %}
+<div class="hero-unit">
+    <h2>
+        Files matching "{{term}}":
+    </h2>
+    </br>
+    <table class="table table-striped span2">
+        <tr>
+            <th>Organization</th>
+            <th>Author</th>
+            <th>Course</th>
+            <th>Term</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+        {% for file in results %}
+        <tr style="border-radius:10px">
+        <form method="POST" action="{{url_for('download', file_id=file.id)}}">
+            <td>{{file.organization.name}}</td>
+            <td>{{file.author.name}}</td>
+            <td>{{file.course_tag}} {{file.course_id}}</td>
+            <td>{{file.folder.term}} {{file.folder.year}}</td>
+            <td>{{file.file_name}}</td>
+            <td><button class="btn" type="submit">Download</td>
+        </form>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -21,7 +21,8 @@
                 overflow:hidden;
             }
             body {
-                background-color: #22DE36;
+                background-color: #75FF75;
+
             }
         </style>
 
@@ -55,10 +56,13 @@
 </a>
                                 <ul class="dropdown-menu">
                                     <li>
+                                        <a href="{{ url_for('create_org') }}">Create Organization</a>
+                                    </li>
+                                    <li>
                                         <a href="{{ url_for('my_orgs') }}">My Organizations</a>
                                     </li>
                                     <li>
-                                        <a href="{{ url_for('create_org') }}">Create Organization</a>
+                                        <a href="{{ url_for('handle_invites') }}">My Invites</a>
                                     </li>
                                 </ul>
                             </li>

@@ -29,15 +29,14 @@ class InviteToOrg(Form):
 
 class FileForm(Form):
     all_tags = get_tags()
-    tags = zip(range(len(all_tags)), all_tags)
-    course_tag = SelectField('course_tag', choices=tags)
+    tags = zip(all_tags, all_tags)
 
+    course_tag = SelectField('course_tag', choices=tags)
     course_id = TextField('course_id')
 
-    all_terms = TERMS
-    terms = zip(range(len(all_terms)), all_terms)
+    terms = zip(TERMS, TERMS)
     term = SelectField('term', choices=terms)
 
     all_years = map(str, get_year_range()[::-1])
-    years = zip(range(len(all_years)), all_years)
+    years = zip(all_years, all_years)
     year = SelectField('year', choices=years)
