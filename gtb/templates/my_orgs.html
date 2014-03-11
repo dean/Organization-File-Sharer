@@ -15,7 +15,7 @@
         </tr>
         {% for org in admin_orgs %}
         <tr style="border-radius:10px">
-            <td><a href="{{ url_for('display_org', id=org.id) }}">{{org.name}}</a></td>
+            <td><a href="{{ url_for('display_org', org_id=org.id) }}">{{org.name}}</a></td>
         </tr>
         {% endfor %}
     </table>
@@ -32,7 +32,7 @@
         </tr>
         {% for org in member_orgs %}
         <tr style="border-radius:10px">
-            <td>{{org.name}}</td>
+            <td><a href="{{ url_for('display_org', org_id=org.id) }}">{{org.name}}</a></td>
         </tr>
         {% endfor %}
     </table>

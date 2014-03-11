@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Upload File</title>
+{% endblock %}
+
+{% block css %}
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='css/jquery-ui-1.10.4.custom.min.css')}}" />
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/jquery-ui-1.10.4.custom.min.js')}}"></script>
+    <script type="text/javascript">
+    $(function() {
+        $( "#datepicker" ).datepicker();
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal"  method="POST" enctype="multipart/form-data" action="{{url_for('upload_file', org_id=organization.id)}}">
+        <div class="control-group">
+            <label class="control-label">Course: </label>
+            {{form.course_tag}}
+            {{form.course_id(placeholder="Ex. 201")}}
+        </div>
+        <div class="control-group">
+            <label class="control-label">Term: </label>
+            {{form.term}}
+        </div>
+        <div class="control-group">
+            <label class="control-label">Year: </label>
+            {{form.year}}
+        </div>
+        <div class="control-group">
+            <label class="control-label">Course Date: </label>
+            <input type="text" id="datepicker" name="date">
+        </div>
+        <div class="control-group">
+            <label class="control-label">Upload: </label>
+            <input type="file" name="file">
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="Create"><br>
+            </div>
+        </div>
+    </form>
+    {% if message %}
+        {{message}}
+    {% endif %}
+
+{% endblock %}

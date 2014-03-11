@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>My Invitations</title>
+{% endblock %}
+
+{% block content %}
+<div class="hero-unit">
+    <h2>Pending Invitations:</h2>
+    </br>
+    {% if orgs %}
+    <table class="table table-striped span2">
+        <tr>
+            <th>Organization</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for org in orgs %}
+        <tr style="border-radius:10px">
+            <form method="POST" action="{{url_for('handle_invites')}}">
+            <td>{{org.organization.name}}</td>
+            <td><button class="btn btn-success" type="submit" name="accept" value="{{org.organization_id}}">Accept</button></td>
+            <td><button class="btn btn-danger" type="submit" name="deny" value="{{org.organization_id}}">Deny</button></td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <em>No pending invitations.</em>
+    {% endif %}
+    </br></br>
+{% endblock %}
+</div>

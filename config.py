@@ -7,7 +7,9 @@ DATABASE_TYPE = 'test'
 DEBUG = False
 
 SECRET_KEY = "ay98r0u2q9305jr2or@QTG%#QH^KWTRTGrqy43"
-UPLOAD_FOLDER = "/var/www/xmls"
+
+UPLOAD_FOLDER = '/var/www/uploads/'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'doc', 'docx', 'odt'])
 
 if DATABASE_TYPE == 'test' or DATABASE_TYPE == 'dev':
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'db/gtb.db')

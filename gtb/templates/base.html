@@ -22,7 +22,6 @@
             }
             body {
                 background-color: #22DE36;
-            
             }
         </style>
 
@@ -31,6 +30,7 @@
         {%endblock%}
 
         <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js') }}"></script>
         {% block javascript %}
 
         {%endblock%}
@@ -49,15 +49,22 @@
                             <li class="active">
                                 <a class="brand" href="/">Home</a>
                             </li>
-                            <li>
-                                <a href="{{ url_for('create_org') }}">Create Organization</a>
-                            </li>
-                            <li>
-                                <a href="{{ url_for('my_orgs') }}">My Organizations</a>
+                            <li class="dropdown">
+                               <a class="dropdown-toggle" data-toggle="dropdown" href="#">Organizations
+<b class="caret"></b>
+</a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{{ url_for('my_orgs') }}">My Organizations</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url_for('create_org') }}">Create Organization</a>
+                                    </li>
+                                </ul>
                             </li>
                             <li>
                                 <form class="navbar-search pull-left" action="/search" method="POST">
-                                    <input name="search" type="text" class="search-query" placeholder="Search by ISBN/Course">
+                                    <input name="search" type="text" class="search-query" placeholder="Search by Course/Term">
                                 </form>
                             </li>
                             <li>
@@ -68,7 +75,7 @@
                             <button class="btn" type="submit">Logout</button>
                         </form>
                         
-                        <p class="navbar-text pull-right">
+                        <p class="navbar-text pull-right" style="white-space:normal">
                             Logged in as: <a href="/me">{{g.user.name}}</a>
                         </p>
                     </div>

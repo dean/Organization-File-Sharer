@@ -1,5 +1,9 @@
-from flask.ext.wtf import Form, TextField, TextAreaField, PasswordField, BooleanField, Required
+from flask.ext.wtf import (Form, SelectField, TextField, TextAreaField,
+                            PasswordField, BooleanField, Required)
+from constants import TERMS
 from models import User
+from util import get_tags, get_year_range
+
 
 class Register(Form):
     name = TextField('name', [Required()])
@@ -22,3 +26,18 @@ class CreateOrg(Form):
 class InviteToOrg(Form):
     username = TextField('username', [Required()])
     rank = TextField('rank', [Required()])
+
+class FileForm(Form):
+    all_tags = get_tags()
+    tags = zip(range(len(all_tags)), all_tags)
+    course_tag = SelectField('course_tag', choices=tags)
+
+    course_id = TextField('course_id')
+
+    all_terms = TERMS
+    terms = zip(range(len(all_terms)), all_terms)
+    term = SelectField('term', choices=terms)
+
+    all_years = map(str, get_year_range()[::-1])
+    years = zip(range(len(all_years)), all_years)
+    year = SelectField('year', choices=years)

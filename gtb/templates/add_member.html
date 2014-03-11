@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Add Organization Member</title>
+{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" method="POST">
+        {% for k in form.data %}
+        <div class="control-group">
+            <label class="control-label">{{ k | capitalize }}: </label>
+            {{form[k]}}
+        </div>
+        {% endfor %}
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="Invite Member"><br>
+            </div>
+        </div>
+    </form>
+    {% if msg %}
+        {{msg}}
+    {% endif %}
+
+{% endblock %}
