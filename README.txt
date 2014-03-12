@@ -1,1 +1,1 @@
-This is an app template for Flask applications.
+A site for sharing and organizing files for organizations.
