@@ -1,6 +1,5 @@
 from flask import (Blueprint, request, render_template, flash, g, session,
                     redirect, url_for, send_from_directory, send_file)
-
 from flask.ext.login import (login_user, logout_user, current_user,
                                 login_required)
 from flask.ext.wtf import Form
@@ -8,73 +7,21 @@ from sqlalchemy import desc, and_
 from werkzeug.utils import secure_filename
 from wtforms.ext.sqlalchemy.orm import model_form
 
-from constants import CURRENT_YEAR, TERMS
+from constants import TERMS
 from gtb import db, app, login_manager
 from forms import (Register, LoginForm, ConversationForm, CreateOrg,
                     InviteToOrg, FileForm)
 from models import (User, Message, Conversation, Organization,
                     OrganizationMember, File, Folder)
+from util import (is_current_user, require_org_member, require_admin,
+                    allowed_file, get_tags, get_user, get_year_range,
+                    member_of)
 
-from functools import wraps
 import datetime
+from functools import wraps
 import os
 import re
 import urllib
-
-
-"""
-Decorators
-"""
-
-
-def is_current_user(f):
-    """
-    Decorator to require the user to be a member of an organization.
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.id == kwargs.get('id'):
-            return f(*args, **kwargs)
-        return no_perms("You can not modify other user's data!")
-    return decorated_function
-
-
-def require_org_member(f):
-    """
-    Decorator to require the user to be a member of an organization.
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if member_of(kwargs.get('org_id')):
-            return f(*args, **kwargs)
-        return no_perms("You are not a member of this organization!")
-    return decorated_function
-
-
-def require_admin(f):
-    """
-    Decorator to require the user to be an administrator.
-    (Overall, not of an organization)
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if g.user.admin:
-            return f(*args, **kwargs)
-        return no_perms("You are not an admin!")
-    return decorated_function
-
-
-"""
-Helper Functions
-"""
-
-
-def allowed_file(filename):
-    """
-    Checks that a file extension exists.
-    Should also use a filter against whitelisted extentions.
-    """
-    return '.' in filename and filename.rsplit('.')
 
 
 @app.before_request
@@ -86,52 +33,6 @@ def before_request():
     if g.user is None:
         g.user = User("", "Guest", "")
     g.login_form = LoginForm()
-
-
-def create_dirs(folder, f=None):
-    """
-    Creates directiories for either JUST an organization, or
-    within an organization for a single file being uploaded.
-    """
-    path = app.config['UPLOAD_PATH'] + folder.organization_id + '/'
-    if not folder.top:
-        path += folder.name.replace(' ', '_') + '/'
-        if f:
-            path += f.course_tag + '_' + f.course_id + '/'
-    if not os.exists(path):
-        os.makedirs(path)
-    else:
-        print "Path exists at: {0}".format(path)
-
-
-def get_user():
-    """
-    A user id is sent in, to check against the session
-    and based on the result of querying that id we
-    return a user (whether it be a sqlachemy obj or an
-    obj named guest
-    """
-
-    if 'user_id' in session:
-            return User.query.filter_by(id=session["user_id"]).first()
-    return None
-
-
-@login_manager.user_loader
-def load_user(userid):
-    return User.query.filter_by(id=userid).first()
-
-
-def member_of(org_id):
-    """
-    Returns if the current user is a member of the organization with
-    an id of org_id.
-    """
-    return db.session.query(OrganizationMember).filter_by(
-                                        user_id=current_user.id,
-                                        organization_id=org_id,
-                                        accepted=True
-                                ).first()
 
 
 """
@@ -320,7 +221,8 @@ def display_org(org_id):
                             folders=folders)
 
 
-@app.route('/organization/<int:organization_id>/term/<path:term>/folder/<path:folder>')
+@app.route('/organization/<int:organization_id>' +
+            '/term/<path:term>/folder/<path:folder>')
 def display_files(organization_id, term="", folder=""):
     """
     Returns all files for a given folder.

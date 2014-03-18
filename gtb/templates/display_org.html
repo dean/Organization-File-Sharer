@@ -5,17 +5,17 @@
 {% endblock %}
 
 {% block content %}
-<div class="hero-unit">
     <h1>{{organization.name}}</h1>
+    </br>
     </br>
     {% if g.user.id == organization.admin_id %}
     <form class="form-horizontal" method="GET" action="{{url_for('add_member', org_id=organization.id)}}">
-    <div class="form-group">
-    <h2>
-    Members:
-    <button class="btn-large btn-success pull-right" type="submit">Add Member</button>
-    </h2>
-    </div>
+        <div class="form-group">
+            <h2>
+            Members:
+            <button class="btn-large btn-success pull-right" type="submit">Add Member</button>
+            </h2>
+        </div>
     </form>
     {% else %}
     <h2>
@@ -23,6 +23,7 @@
     </h2>
     {% endif %}
     </br>
+    <div class="overflow-container">
     <table class="table table-striped span2">
         <tr>
             <th>Members</th>
@@ -39,52 +40,60 @@
         </tr>
         {% endfor %}
     </table>
+    </div>
     </br></br>
-
-    {% if folders %}
-    <h2>
-    Folders:
-    </h2>
-    <ul>
-        {% for folder in folders %}
-        <li><a href="{{url_for('get_folder', organization_id=organization.id, folder_id=folder.id)}}">{{folder.name}}</a></li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    </br>
-
-    <form class="form-horizontal" method="GET" action="{{url_for('upload_file', org_id=organization.id)}}">
-        <div class="form-group">
+    <div class="row-fluid">
+        <div class="span3">
+            {% if folders %}
             <h2>
-                Recent Files:
-                <button class="btn-large btn-primary pull-right" type="submit">Upload!</button>
+            Folders:
             </h2>
+            <ul>
+                {% for folder in folders %}
+                <li><a href="{{url_for('get_folder', organization_id=organization.id, folder_id=folder.id)}}">{{folder.name}}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            </br>
         </div>
-    </form>
-    </br>
-    {% if recent_files %}
-    <table class="table table-striped span2">
-        <tr>
-            <th>Author</th>
-            <th>Course</th>
-            <th>Term</th>
-            <th>Name</th>
-            <th></th>
-        </tr>
-        {% for file in recent_files %}
-        <tr style="border-radius:10px">
-        <form method="POST" action="{{url_for('download', file_id=file.id)}}">
-            <td>{{file.author.name}}</td>
-            <td>{{file.course_tag}} {{file.course_id}}</td>
-            <td>{{file.folder.term}} {{file.folder.year}}</td>
-            <td>{{file.file_name}}</td>
-            <td><button class="btn" type="submit">Download</td>
-        </form>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <em>There are no files yet....</em>
-    {% endif %}
-</div>
+
+        <div class="span9">
+            <form class="form-horizontal" method="GET" action="{{url_for('upload_file', org_id=organization.id)}}">
+                <div class="form-group">
+                    <h2>
+                        Recent Files:
+                        <button class="btn-large btn-primary pull-right" type="submit">Upload!</button>
+                    </h2>
+                </div>
+            </form>
+            </br>
+            {% if recent_files %}
+
+            <div class="overflow-container">
+            <table class="table table-striped span12">
+                <tr>
+                    <th>Author</th>
+                    <th>Course</th>
+                    <th>Term</th>
+                    <th>Name</th>
+                    <th></th>
+                </tr>
+                {% for file in recent_files %}
+                <tr style="border-radius:10px">
+                <form method="POST" action="{{url_for('download', file_id=file.id)}}">
+                    <td>{{file.author.name}}</td>
+                    <td>{{file.course_tag}} {{file.course_id}}</td>
+                    <td>{{file.folder.term}} {{file.folder.year}}</td>
+                    <td>{{file.file_name}}</td>
+                    <td><button class="btn" type="submit">Download</td>
+                </form>
+                </tr>
+                {% endfor %}
+            </table>
+            </div>
+            {% else %}
+                <em>There are no files yet....</em>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

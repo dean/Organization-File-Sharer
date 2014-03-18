@@ -12,4 +12,4 @@ login_manager.setup_app(app)
 db = SQLAlchemy(app)
 db.init_app(app)
 
-import models, views
+import models, controllers

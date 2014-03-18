@@ -9,6 +9,7 @@
     <h2>Pending Invitations:</h2>
     </br>
     {% if orgs %}
+    <div class="overflow-container">
     <table class="table table-striped span2">
         <tr>
             <th>Organization</th>
@@ -25,6 +26,7 @@
         </tr>
         {% endfor %}
     </table>
+    </div>
     {% else %}
         <em>No pending invitations.</em>
     {% endif %}
