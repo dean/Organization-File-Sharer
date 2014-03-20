@@ -5,13 +5,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="hero-unit">
     <h2>
         Files matching "{{term}}":
     </h2>
     </br>
-    <div class="overflow-container">
-    <table class="table table-striped span2">
+    <table class="table table-striped span12">
         <tr>
             <th>Organization</th>
             <th>Author</th>
@@ -33,6 +31,4 @@
         </tr>
         {% endfor %}
     </table>
-    </div>
-</div>
 {% endblock %}

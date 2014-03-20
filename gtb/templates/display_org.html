@@ -23,11 +23,13 @@
     </h2>
     {% endif %}
     </br>
-    <div class="overflow-container">
-    <table class="table table-striped span2">
+    <table id="members" class="table table-striped">
         <tr>
             <th>Members</th>
             <th>Rank</th>
+            {% if member.user.id == organization.admin_id %}
+            <th style="text-align:right"></th>
+            {% endif %}
         </tr>
         {% for member in members %}
         <tr style="border-radius:10px">
@@ -37,22 +39,28 @@
                 <td><a href="/{{g.user.id}}/{{member.user.id}}/conversation" class="marginized">{{member.user.name}}</a></td>
             {% endif %}
             <td>{{ member.rank }}</td>
+            {% if member.user.id == organization.admin_id %}
+            <td style="text-align:right">
+                <button name="delete" value="{{member.user.id}}" class="btn-danger btn">X</button>
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>
-    </div>
     </br></br>
     <div class="row-fluid">
         <div class="span3">
-            {% if folders %}
             <h2>
             Folders:
             </h2>
+            {% if folders %}
             <ul>
                 {% for folder in folders %}
                 <li><a href="{{url_for('get_folder', organization_id=organization.id, folder_id=folder.id)}}">{{folder.name}}</a></li>
                 {% endfor %}
             </ul>
+            {% else %}
+            <em>There are no folders yet...</em>
             {% endif %}
             </br>
         </div>

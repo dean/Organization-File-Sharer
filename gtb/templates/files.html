@@ -5,40 +5,35 @@
 {% endblock %}
 
 {% block content %}
-<div class="hero-unit">
-    </br>
-            <form class="form-horizontal" method="GET" action="{{url_for('upload_file', org_id=organization_id)}}">
-                <div class="form-group">
-                    <h2>
-                        Files in "{{folder}}":
-                        <button class="btn-large btn-primary pull-right" type="submit">Upload!</button>
-                    </h2>
-                </div>
-            </form>
-            </br>
-            <div class="overflow-container">
-            <table class="table table-striped span2">
-                <tr>
-                    <th>Author</th>
-                    <th>Course</th>
-                    <th>Term</th>
-                    <th>Name</th>
-                    <th></th>
-                </tr>
-                {% for file in files %}
-                <tr style="border-radius:10px">
-                <form method="POST" action="{{url_for('download', file_id=file.id)}}">
-                    <td>{{file.author.name}}</td>
-                    <td>{{file.course_tag}} {{file.course_id}}</td>
-                    <td>{{file.folder.term}} {{file.folder.year}}</td>
-                    <td>{{file.file_name}}</td>
-                    <td><button class="btn" type="submit">Download</td>
-                </form>
-                </tr>
-                {% endfor %}
-            </table>
-            </div>
+    <form class="form-horizontal" method="GET" action="{{url_for('upload_file', org_id=organization_id)}}">
+        <div class="form-group">
+            <h2>
+                Files in "{{folder}}":
+                <button class="btn-large btn-primary pull-right" type="submit">Upload!</button>
+            </h2>
         </div>
+    </form>
+    </br>
+    <div class="overflow-container">
+        <table class="table table-striped span2">
+            <tr>
+                <th>Author</th>
+                <th>Course</th>
+                <th>Term</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            {% for file in files %}
+            <tr style="border-radius:10px">
+            <form method="POST" action="{{url_for('download', file_id=file.id)}}">
+                <td>{{file.author.name}}</td>
+                <td>{{file.course_tag}} {{file.course_id}}</td>
+                <td>{{file.folder.term}} {{file.folder.year}}</td>
+                <td>{{file.file_name}}</td>
+                <td><button class="btn" type="submit">Download</td>
+            </form>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
-</div>
 {% endblock %}

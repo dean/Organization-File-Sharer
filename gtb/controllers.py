@@ -1,5 +1,5 @@
-from flask import (Blueprint, request, render_template, flash, g, session,
-                    redirect, url_for, send_from_directory, send_file)
+from flask import (Blueprint, request, render_template, flash, g, jsonify,
+                    redirect, send_from_directory, send_file, session, url_for)
 from flask.ext.login import (login_user, logout_user, current_user,
                                 login_required)
 from flask.ext.wtf import Form
@@ -393,6 +393,30 @@ def logout():
     logout_user()
     flash("Logged out successfully!")
     return redirect("/")
+
+
+@app.route('/organization/<int:organization_id>/users/remove', methods=['POST'])
+def remove_user(organization_id):
+    """
+    Removes a user from an organization
+    """
+    user_id = int(request.form.get('user_id'))
+    print user_id
+    print request.form
+    om = OrganizationMember.query.filter_by(
+                                    organization_id=organization_id,
+                                    user_id=user_id
+                                ).first()
+
+    if om.organization.admin == current_user:
+        user = OrganizationMember.query.filter_by(
+                                        organization_id=organization_id,
+                                        user_id=user_id
+                                    ).first()
+        db.session.delete(user)
+        db.session.commit()
+
+    return jsonify({'message': 'Success!'})
 
 
 @app.route("/register", methods=['GET', 'POST'])
