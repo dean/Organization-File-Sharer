@@ -27,7 +27,7 @@
         <tr>
             <th>Members</th>
             <th>Rank</th>
-            {% if member.user.id == organization.admin_id %}
+            {% if current_user.id == organization.admin_id %}
             <th style="text-align:right"></th>
             {% endif %}
         </tr>
@@ -39,7 +39,7 @@
                 <td><a href="/{{g.user.id}}/{{member.user.id}}/conversation" class="marginized">{{member.user.name}}</a></td>
             {% endif %}
             <td>{{ member.rank }}</td>
-            {% if member.user.id == organization.admin_id %}
+            {% if current_user.id == organization.admin_id %}
             <td style="text-align:right">
                 <button name="delete" value="{{member.user.id}}" class="btn-danger btn">X</button>
             </td>
